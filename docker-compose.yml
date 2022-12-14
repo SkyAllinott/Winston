@@ -26,6 +26,7 @@ services:
 
     volumes:
       - /mnt/d:/storage
+      - /mnt/e:/storage2
       - ./plex/config:/config
       - ./plex/transcode:/transcode
       - /etc/localtime:/etc/localtime:ro
@@ -57,6 +58,7 @@ services:
     volumes:
       - ./sonarr/config:/config
       - /mnt/d/plex/tv_shows:/tv
+      - /mnt/e/plex/tv_shows:/tv2
       - /mnt/d/transmission/downloads:/downloads
     ports:
       - 8989:8989 
@@ -71,6 +73,7 @@ services:
     volumes:
       - ./radarr/config:/config
       - /mnt/d/plex/movies:/movies
+      - /mnt/e/plex/movies:/movies2
       - /mnt/d/transmission/downloads:/downloads
     ports:
       - 7878:7878
