@@ -1,106 +1,102 @@
-version: '3.2'
-
 services:
-
   plex:
+    image: lscr.io/linuxserver/plex:latest
     container_name: plex
-    image: plexinc/pms-docker
-    restart: unless-stopped
     network_mode: host
-
-    ports:
-      - 32400:32400/tcp
-      - 3005:3005/tcp
-      - 8324:8324/tcp
-      - 32469:32469/tcp
-      - 1900:1900/udp
-      - 32410:32410/udp
-      - 32412:32412/udp
-      - 32413:32413/udp
-      - 32414:32414/udp
-
     environment:
-      - PLEX_CLAIM="claim-xqDGsc1Wan1ExT2D3z8H"
-      - PLEX_UID=1000
-      - PLEX_GID=1000
-
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Edmonton
+      - VERSION=docker
+      - PLEX_CLAIM= #optional
     volumes:
-      - /mnt/d:/storage
-      - /mnt/e:/storage2
-      - ./plex/config:/config
-      - ./plex/transcode:/transcode
-      - /etc/localtime:/etc/localtime:ro
+      - /home/sky/docker-compose/plex/library:/config
+      - /media/sky/datapartition/plex/tv_shows:/tv
+      - /media/sky/datapartition2/plex/tv_shows:/tv2
+      - /media/sky/datapartition/plex/movies:/movies
+      - /media/sky/datapartition2/plex/movies:/movies2
+    restart: unless-stopped
 
   transmission:
-    image: linuxserver/transmission
+    image: lscr.io/linuxserver/transmission:latest
     container_name: transmission
     environment:
       - PUID=1000
-      - GUID=1000
-      - USER=bret
+      - PGID=1000
+      - TZ=America/Edmonton
+      - TRANSMISSION_WEB_HOME= #optional
+      - USER=sky
       - PASS=transmission
+      - WHITELIST= #optional
+      - PEERPORT= #optional
+      - HOST_WHITELIST= #optional
     volumes:
-      - ./transmission/config:/config
-      - /mnt/d/transmission/downloads:/downloads
-      - ./transmission/watch:/watch
+      - /home/sky/docker-compose/transmission/config:/config
+      - /media/sky/datapartition/transmission/downloads:/downloads
+      - /home/sky/docker-compose/transmission/watch:/watch
     ports:
       - 9091:9091
       - 51413:51413
       - 51413:51413/udp
     restart: unless-stopped
-
-  sonarr:
-    image: linuxserver/sonarr
-    container_name: sonarr
-    environment:
-      - PUID=1000
-      - GUID=1000
-    volumes:
-      - ./sonarr/config:/config
-      - /mnt/d/plex/tv_shows:/tv
-      - /mnt/e/plex/tv_shows:/tv2
-      - /mnt/d/transmission/downloads:/downloads
-    ports:
-      - 8989:8989 
-    restart: unless-stopped     
-
-  radarr:
-    image: linuxserver/radarr
-    container_name: radarr
-    environment:
-      - PUID=1000
-      - GUID=1000
-    volumes:
-      - ./radarr/config:/config
-      - /mnt/d/plex/movies:/movies
-      - /mnt/e/plex/movies:/movies2
-      - /mnt/d/transmission/downloads:/downloads
-    ports:
-      - 7878:7878
-    restart: unless-stopped
-
+    
   jackett:
-    image: linuxserver/jackett
+    image: lscr.io/linuxserver/jackett:latest
     container_name: jackett
     environment:
       - PUID=1000
-      - GUID=1000
+      - PGID=1000
+      - TZ=America/Edmonton
+      - AUTO_UPDATE=true #optional
+      - RUN_OPTS= #optional
     volumes:
-      - ./jackett/config:/config
-      - /mnt/d/transmission/downloads:/downloads
+      - /home/sky/docker-compose/jackett/config:/config
+      - /media/sky/datapartition/transmission/downloads:/downloads
     ports:
       - 9117:9117
     restart: unless-stopped
-
-  tautulli:
-    image: linuxserver/tautulli
-    container_name: tautulli
-    environment: 
+    
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
       - PUID=1000
-      - GUID=1000
+      - PGID=1000
+      - TZ=America/Edmonton
     volumes:
-      - ./tautulli/config:/config
-      - ./plex/config/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs
+      - /home/sky/docker-compose/sonarr/config:/config
+      - /media/sky/datapartition/plex/tv_shows:/tv
+      - /media/sky/datapartition2/plex/tv_shows:/tv2
+      - /media/sky/datapartition/transmission/downloads:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+    
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Edmonton
+    volumes:
+      - /home/sky/docker-compose/radarr/config:/config
+      - /media/sky/datapartition/plex/movies:/movies
+      - /media/sky/datapartition2/plex/movies:/movies2
+      - /media/sky/datapartition/transmission/downloads:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+    
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Edmonton
+    volumes:
+      - /home/sky/docker-compose/tautulli/config:/config
     ports:
       - 8181:8181
-    restart: unless-stopped  
+    restart: unless-stopped
