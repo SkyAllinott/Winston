@@ -11,12 +11,12 @@ services:
       - PLEX_CLAIM= #optional
     volumes:
       - /home/sky/docker-compose/plex/library:/config
-      - /media/sky/datapartition/plex/tv_shows:/tv
-      - /media/sky/datapartition2/plex/tv_shows:/tv2
-      - /media/sky/datapartition/plex/movies:/movies
-      - /media/sky/datapartition2/plex/movies:/movies2
+      - /media/sky/datapartition1/plex/tv_shows:/tv
+      - /media/sky/datapartition21/plex/tv_shows:/tv2
+      - /media/sky/datapartition1/plex/movies:/movies
+      - /media/sky/datapartition21/plex/movies:/movies2
     restart: unless-stopped
-
+    
   transmission:
     image: lscr.io/linuxserver/transmission:latest
     container_name: transmission
@@ -32,7 +32,7 @@ services:
       - HOST_WHITELIST= #optional
     volumes:
       - /home/sky/docker-compose/transmission/config:/config
-      - /media/sky/datapartition/transmission/downloads:/downloads
+      - /media/sky/datapartition1/transmission/downloads:/downloads
       - /home/sky/docker-compose/transmission/watch:/watch
     ports:
       - 9091:9091
@@ -65,9 +65,9 @@ services:
       - TZ=America/Edmonton
     volumes:
       - /home/sky/docker-compose/sonarr/config:/config
-      - /media/sky/datapartition/plex/tv_shows:/tv
-      - /media/sky/datapartition2/plex/tv_shows:/tv2
-      - /media/sky/datapartition/transmission/downloads:/downloads
+      - /media/sky/datapartition1/plex/tv_shows:/tv
+      - /media/sky/datapartition21/plex/tv_shows:/tv2
+      - /media/sky/datapartition1/transmission/downloads:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -81,9 +81,9 @@ services:
       - TZ=America/Edmonton
     volumes:
       - /home/sky/docker-compose/radarr/config:/config
-      - /media/sky/datapartition/plex/movies:/movies
-      - /media/sky/datapartition2/plex/movies:/movies2
-      - /media/sky/datapartition/transmission/downloads:/downloads
+      - /media/sky/datapartition1/plex/movies:/movies
+      - /media/sky/datapartition21/plex/movies:/movies2
+      - /media/sky/datapartition1/transmission/downloads:/downloads
     ports:
       - 7878:7878
     restart: unless-stopped
