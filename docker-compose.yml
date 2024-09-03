@@ -11,10 +11,10 @@ services:
       - PLEX_CLAIM= #optional
     volumes:
       - /home/sky/docker-compose/plex/library:/config
-      - /media/sky/datapartition1/plex/tv_shows:/tv
-      - /media/sky/datapartition21/plex/tv_shows:/tv2
-      - /media/sky/datapartition1/plex/movies:/movies
-      - /media/sky/datapartition21/plex/movies:/movies2
+      - /media/sky/datapartition3/plex/tv_shows:/tv
+      - /media/sky/datapartition22/plex/tv_shows:/tv2
+      - /media/sky/datapartition3/plex/movies:/movies
+      - /media/sky/datapartition22/plex/movies:/movies2
     restart: unless-stopped
     
   transmission:
@@ -26,13 +26,13 @@ services:
       - TZ=America/Edmonton
       - TRANSMISSION_WEB_HOME= #optional
       - USER=sky
-      - PASS=transmission
+      - PASS= <PASSWORD>
       - WHITELIST= #optional
       - PEERPORT= #optional
       - HOST_WHITELIST= #optional
     volumes:
       - /home/sky/docker-compose/transmission/config:/config
-      - /media/sky/datapartition1/transmission/downloads:/downloads
+      - /media/sky/datapartition3/transmission/downloads:/downloads
       - /home/sky/docker-compose/transmission/watch:/watch
     ports:
       - 9091:9091
@@ -51,7 +51,7 @@ services:
       - RUN_OPTS= #optional
     volumes:
       - /home/sky/docker-compose/jackett/config:/config
-      - /media/sky/datapartition/transmission/downloads:/downloads
+      - /media/sky/datapartition3/transmission/downloads:/downloads
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -65,9 +65,9 @@ services:
       - TZ=America/Edmonton
     volumes:
       - /home/sky/docker-compose/sonarr/config:/config
-      - /media/sky/datapartition1/plex/tv_shows:/tv
-      - /media/sky/datapartition21/plex/tv_shows:/tv2
-      - /media/sky/datapartition1/transmission/downloads:/downloads
+      - /media/sky/datapartition3/plex/tv_shows:/tv
+      - /media/sky/datapartition22/plex/tv_shows:/tv2
+      - /media/sky/datapartition3/transmission/downloads:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -81,9 +81,9 @@ services:
       - TZ=America/Edmonton
     volumes:
       - /home/sky/docker-compose/radarr/config:/config
-      - /media/sky/datapartition1/plex/movies:/movies
-      - /media/sky/datapartition21/plex/movies:/movies2
-      - /media/sky/datapartition1/transmission/downloads:/downloads
+      - /media/sky/datapartition3/plex/movies:/movies
+      - /media/sky/datapartition22/plex/movies:/movies2
+      - /media/sky/datapartition3/transmission/downloads:/downloads
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -99,4 +99,26 @@ services:
       - /home/sky/docker-compose/tautulli/config:/config
     ports:
       - 8181:8181
+    restart: unless-stopped
+
+  wg-easy:
+    image: ghcr.io/wg-easy/wg-easy
+    container_name: wg-easy
+    cap_add: 
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - LANG=en
+      - WG_HOST=<PUBLIC IP>
+      - PASSWORD=<PASSWORD>
+      - PORT=51821 
+      - WG_PORT=51820 # Have to forward this port
+    volumes:
+      - /home/sky/docker-compose/wg-easy/:/etc/wireguard
+    ports:
+      51820:51820/udp
+      51821:51821/tcp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
     restart: unless-stopped
