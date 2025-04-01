@@ -194,18 +194,6 @@ services:
     volumes:
       - /home/sky/docker-compose/overseerr/config:/app/config
     restart: unless-stopped
-  
-  npm:
-    image: 'jc21/nginx-proxy-manager:latest'
-    container_name: npm
-    ports:
-      - '80:80'
-      - '443:443'
-      - '81:81'
-    volumes:
-      - /home/sky/docker-compose/npm/data:/data
-      - /home/sky/docker-compose/npm/letsencrypt:/etc/letsencrypt
-    restart: unless-stopped
 
 flaresolverr:
     image: 'ghcr.io/flaresolverr/flaresolverr:latest'
