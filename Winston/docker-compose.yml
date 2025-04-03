@@ -105,32 +105,6 @@ services:
     ports:
       - 8181:8181
     restart: unless-stopped
-  
-  netdata:
-    image: netdata/netdata
-    container_name: netdata
-    pid: host
-    network_mode: host
-    restart: unless-stopped
-    cap_add:
-      - SYS_PTRACE
-      - SYS_ADMIN
-    security_opt:
-      - apparmor:unconfined
-    volumes:
-      - netdataconfig:/etc/netdata
-      - netdatalib:/var/lib/netdata
-      - netdatacache:/var/cache/netdata
-      - /:/host/root:ro,rslave
-      - /etc/passwd:/host/etc/passwd:ro
-      - /etc/group:/host/etc/group:ro
-      - /etc/localtime:/etc/localtime:ro
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /etc/os-release:/host/etc/os-release:ro
-      - /var/log:/host/var/log:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /run/dbus:/run/dbus:ro
       
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -173,7 +147,7 @@ services:
       - /home/sky/docker-compose/overseerr/config:/app/config
     restart: unless-stopped
 
-flaresolverr:
+  flaresolverr:
     image: 'ghcr.io/flaresolverr/flaresolverr:latest'
     container_name: flaresolverr
     environment: 
@@ -185,8 +159,35 @@ flaresolverr:
       - "${PORT-8191}:8191"
     restart: unless-stopped
 
-      
-volumes:
-  netdataconfig:
-  netdatalib:
-  netdatacache:
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:v1.9.1
+    container_name: node_exporter
+    command:
+      - "--path.rootfs=/host"
+      - '--web.listen-address=0.0.0.0:9100'
+    ports:
+      - '9100:9100'
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - /:/host:ro,rslave
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - 8080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /run:/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    privileged: true
+    restart: unless-stopped
+
+networks:
+  monitoring:
+    driver: bridge
