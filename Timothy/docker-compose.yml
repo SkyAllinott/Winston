@@ -78,6 +78,19 @@ services:
       - net.ipv4.ip_forward=1
     restart: unless-stopped
 
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Edmonton
+    volumes:
+      - /home/sky/docker-compose/tautulli/config:/config
+    ports:
+      - 8181:8181
+    restart: unless-stopped
+
 
 volumes:
   prometheus-data:
