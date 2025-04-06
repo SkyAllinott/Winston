@@ -91,9 +91,33 @@ services:
       - 8181:8181
     restart: unless-stopped
 
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    networks:
+      - pihole_network
+    environment:
+      - TZ=Your/Timezone
+      - WEBPASSWORD=  # Replace with password
+      - ServerIP=192.168.0.80
+    ports:
+      - "7080:80"  # Map external port 7080 to internal port 80 (HTTP)
+      - "7443:443" # Map external port 7443 to internal port 443 (HTTPS)
+      - "53:53"    # DNS port (still using 53 for DNS)
+      - "53:53/udp" # DNS over UDP
+    volumes:
+      - "./etc-pihole:/etc/pihole"
+      - "./etc-dnsmasq.d:/etc/dnsmasq.d"
+    restart: unless-stopped
+
 
 volumes:
   prometheus-data:
     driver: local
   grafana-data:
     driver: local
+
+networks:
+  pihole_network:
+    driver: bridge
+
